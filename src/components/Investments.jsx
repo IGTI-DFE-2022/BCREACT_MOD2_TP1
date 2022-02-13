@@ -1,5 +1,6 @@
 import React from 'react';
 import { investments, reports } from '../data/investments-2-1-1';
+import { calculateRelativeReturns, filterReportsByInvestment } from '../helpers/investmentHelpers';
 import Investment from './Investment';
 
 export default function Investments() {
@@ -7,8 +8,9 @@ export default function Investments() {
   console.log(investments);
   console.log(reports);
 
-  function filterReportsByInvestment(investment) {
-    return reports.filter(report => report.investmentId === investment.id).sort((a, b) => a.month - b.month);
+  function prepareReports(investment) {
+    let filteredReports = filterReportsByInvestment(investment, reports);
+    return calculateRelativeReturns(investment, filteredReports);
   }
 
   return (
@@ -16,7 +18,7 @@ export default function Investments() {
       <h2 className='font-bold text-lg'>Investments</h2>
       <ul>
         {investments.map(inv => 
-          <Investment key={inv.id} investment={inv} reports={filterReportsByInvestment(inv)}>{inv.description}</Investment>  
+          <Investment key={inv.id} investment={inv} reports={prepareReports(inv)}>{inv.description}</Investment>  
         )}
       </ul>
     </>
